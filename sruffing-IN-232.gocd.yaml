@@ -1,5 +1,5 @@
 pipelines:
-  azure-functions-publish-snapshot-playground:
+  azure-publish-snapshot-playground:
     group: My-Pipelines
     label_template: ${COUNT}
     environment_variables:

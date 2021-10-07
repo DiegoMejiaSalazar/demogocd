@@ -1,0 +1,57 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name"
+        },
+        "AzureDatabricks1": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [{
+        "name": "[concat(parameters('factoryName'), '/databricks_compute')]",
+        "type": "Microsoft.DataFactory/factories/pipelines",
+        "apiVersion": "2018-06-01",
+        "properties": {
+            "activities": [{
+                "name": "Notebook1",
+                "type": "DatabricksNotebook",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "notebookPath": "/Users/dmejia@pros.com/ComputeFunctionsV2Diego",
+                    "baseParameters": {
+                        "definition": "{\n   \"inputSources\": [\n      {\n         \"name\": \"student_performance\",\n         \"sourceType\": \"blob\",\n         \"format\": \"csv\",\n         \"properties\": {\n            \"storageAccount\": \"saisdtanisupdv2\",\n            \"kvName\": \"KvIntegrationServiceDv2\",\n            \"kvSecretName\": \"kvdiegocuststoracckey\",\n            \"kvAppId\": \"f23c2a10-4d9b-4f86-8e5b-9858d76c56ee\",\n            \"kvAppSecret\": \"__RqLO~uGAEI9kbWa6B2v9WSaB9-k.l6Zg\",\n            \"url\": \"wasbs://diegocontainertraining@saisdtanisupdv2.blob.core.windows.net/StudentsPerformance.csv\",\n            \"inferSchema\": \"false\",\n            \"header\": \"true\",\n            \"delimiter\": \",\"\n         }\n      },\n      {\n         \"name\": \"student_ethnical_group\",\n         \"sourceType\": \"blob\",\n         \"format\": \"csv\",\n         \"properties\": {\n            \"storageAccount\": \"saisdtanisupdv2\",\n            \"kvName\": \"KvIntegrationServiceDv2\",\n            \"kvSecretName\": \"kvdiegocuststoracckey\",\n            \"kvAppId\": \"f23c2a10-4d9b-4f86-8e5b-9858d76c56ee\",\n            \"kvAppSecret\": \"__RqLO~uGAEI9kbWa6B2v9WSaB9-k.l6Zg\",\n            \"url\": \"wasbs://diegocontainertraining@saisdtanisupdv2.blob.core.windows.net/ethnical.csv\",\n            \"inferSchema\": \"true\",\n            \"header\": \"true\",\n            \"delimiter\": \",\"\n         }\n      }\n   ],\n   \"outputSources\": [\n      {\n         \"name\": \"xml_output\",\n         \"sourceType\": \"blob\",\n         \"format\": \"xml\",\n         \"saveMode\": \"overwrite\",\n         \"properties\": {\n            \"storageAccount\": \"saisdtanisupdv2\",\n            \"kvName\": \"KvIntegrationServiceDv2\",\n            \"kvSecretName\": \"kvdiegocuststoracckey\",\n            \"kvAppId\": \"f23c2a10-4d9b-4f86-8e5b-9858d76c56ee\",\n            \"kvAppSecret\": \"__RqLO~uGAEI9kbWa6B2v9WSaB9-k.l6Zg\",\n            \"url\": \"wasbs://diegocontainertraining@saisdtanisupdv2.blob.core.windows.net/students_ethnical\",\n            \"rootTag\": \"ROOT_STUDENT\",\n            \"rowTag\": \"STUDENT\"\n         }\n      }\n   ],\n   \"computeFunctions\": [\n      {\n         \"name\": \"transform\",\n         \"function\": \"SparkSql\",\n         \"inputNames\": [\n            \"student_performance\",\n            \"student_ethnical_group\"\n         ],\n         \"outputNames\": [\"xml_output\"],\n         \"properties\": {\n            \"sql\": \"SELECT * FROM student_performance INNER JOIN student_ethnical_group ON student_performance.ethnicity = student_ethnical_group.id\"\n         }\n      }\n   ]\n}",
+                        "keyVaultName": "KvIntegrationServiceDv2"
+                    },
+                    "libraries": [{
+                        "jar": "dbfs:/FileStore/compute/compute-functions-0.5.1.jar"
+                    }]
+                },
+                "linkedServiceName": {
+                    "referenceName": "[parameters('AzureDatabricks1')]",
+                    "type": "LinkedServiceReference"
+                }
+            }],
+            "policy": {
+                "elapsedTimeMetric": {},
+                "cancelAfter": {}
+            },
+            "annotations": [],
+            "lastPublishTime": "2021-10-01T19:08:54Z"
+        },
+        "dependsOn": []
+    }]
+}
