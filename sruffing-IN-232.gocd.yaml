@@ -17,7 +17,7 @@ pipelines:
           keep_artifacts: no
           jobs:
             RepoAsArtifact:
-              elastic_profile_id: "git"
+              elastic_profile_id: "gerrit.cs"
               tasks:
                 - script: |
                     echo ${TAGNAME}
