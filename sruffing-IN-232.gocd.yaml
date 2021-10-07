@@ -1,0 +1,45 @@
+pipelines:
+  azure-functions-publish-snapshot-playground:
+    group: My-Pipelines
+    label_template: ${COUNT}
+    environment_variables:
+      TAGNAME: "master"
+      RELEASE: "false"
+    materials:
+      azure-functions:
+        git: https://stash.pros.com/scm/~dmejia/dmejia-is-gocd-playground.git
+        branch: master
+        auto_update: true
+    stages:
+      - PullRepo:
+          clean_workspace: true
+          fetch_materials: yes
+          keep_artifacts: no
+          jobs:
+            RepoAsArtifact:
+              elastic_profile_id: "git"
+              tasks:
+                - script: |
+                    echo ${TAGNAME}
+                    git checkout ${TAGNAME}
+              artifacts:
+                - build:
+                    source: "**/*"
+                    destination: repo
+      - build:
+          fetch_materials: no
+          jobs:
+            buildAndUnitTest:
+              elastic_profile_id: "build-tools"
+              tasks:
+                - fetch:
+                    stage: PullRepo
+                    job: RepoAsArtifact
+                    source: repo/
+                - script: |
+                    cd repo
+                    echo "============= BUILD STABE ==================="
+              artifacts:
+                - test:
+                    source: repo/build/**/*
+                    destination: build
