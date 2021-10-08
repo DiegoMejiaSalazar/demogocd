@@ -11,26 +11,25 @@ pipelines:
         branch: master
         auto_update: true
     stages:
-      - PullRepo:
+      - PullRepository:
           clean_workspace: true
           fetch_materials: yes
           keep_artifacts: no
           jobs:
             RepoAsArtifact:
-              elastic_profile_id: "gerrit.cs"
               tasks:
                 - script: |
                     echo ${TAGNAME}
                     git checkout ${TAGNAME}
+                    git pull ${TAGNAME}
               artifacts:
                 - build:
-                    source: "**/*"
+                    source: "*.json"
                     destination: repo
       - build:
           fetch_materials: no
           jobs:
             buildAndUnitTest:
-              elastic_profile_id: "build-tools"
               tasks:
                 - fetch:
                     stage: PullRepo
@@ -38,8 +37,4 @@ pipelines:
                     source: repo/
                 - script: |
                     cd repo
-                    echo "============= BUILD STABE ==================="
-              artifacts:
-                - test:
-                    source: repo/build/**/*
-                    destination: build
+                    az deployment group create --name blanktemplate --resource-group myResourceGroup --template-file demo.json --parameters parameters.json
