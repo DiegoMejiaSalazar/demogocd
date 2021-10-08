@@ -20,8 +20,6 @@ pipelines:
               tasks:
                 - script: |
                     echo ${TAGNAME}
-                    git checkout ${TAGNAME}
-                    git pull ${TAGNAME}
               artifacts:
                 - build:
                     source: "*.json"
