@@ -7,7 +7,7 @@ pipelines:
       RELEASE: "false"
     materials:
       azure-functions:
-        git: https://stash.pros.com/scm/~dmejia/dmejia-is-gocd-playground.git
+        git: https://github.com/DiegoMejiaSalazar/demogocd.git
         branch: master
         auto_update: true
     stages:
